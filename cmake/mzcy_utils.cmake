@@ -1,5 +1,5 @@
 # mzcy_utils.cmake
-# 2023-11-13
+# 2023-11-18
 ## marcos
 
 macro(mzcy_usage)
@@ -89,7 +89,7 @@ macro(mzcy_init_quiet)
     if (("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
         set(common_flags  "-Wall -Wextra -Wfatal-errors -Wshadow -Wno-unused-parameter")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        set(common_flags "/W3 /WX /MP")
+        set(common_flags "/W3 /WX /MP /utf-8")
     else()
         set(common_flags "")
     endif()
