@@ -3,9 +3,9 @@
 int main() {
     printf("Hello,world\n");
 
-    printf("target name: %s\n", MZCY_TARGET_NAME);
-    printf("project location: %s\n", MZCY_PROJECT_SOURCE_DIR);
-    printf("current location: %s\n", MZCY_CURRENT_SOURCE_DIR);
+    printf("target name: %s\n", ZERO_TARGET_NAME);
+    printf("project location: %s\n", ZERO_PROJECT_SOURCE_DIR);
+    printf("current location: %s\n", ZERO_CURRENT_SOURCE_DIR);
 
     return 0;
 }

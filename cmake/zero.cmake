@@ -1,48 +1,48 @@
-# mzcy_utils.cmake
-# 2023-11-18
+# zero.cmake
+# 2024-04-01
 ## marcos
 
-macro(mzcy_usage)
+macro(zero_usage)
     message(STATUS "\n"
         "    ###################################\n"
         "    #                                 #\n"
-        "    #          MzcyUtils 1.0          #\n"
+        "    #          CMakeZero 1.0          #\n"
         "    #                                 #\n"
         "    ###################################\n")
 
     message(STATUS "macro usage:\n"
-        "   - mzcy_init(): print usage, init the project (call after project)\n"
-        "   - mzcy_init_quiet(): init the project  (call after project)\n"
-        "   - mzcy_info(): show infomation\n"
-        "   - mzcy_usage(): print this usage\n"
-        "   - mzcy_use_bin_subdir(): use bin/debug as runtime output directory when Debug\n"
-        "   - mzcy_add_my_rpath(): add environment variable ENV{MY_RPATH} to rpath\n"
-        "   - mzcy_enable_qt(): enable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC\n"
-        "   - mzcy_disable_qt(): disable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC\n")
+        "   - zero_init(): print usage, init the project (call after project)\n"
+        "   - zero_init_quiet(): init the project  (call after project)\n"
+        "   - zero_info(): show infomation\n"
+        "   - zero_usage(): print this usage\n"
+        "   - zero_use_bin_subdir(): use bin/debug as runtime output directory when Debug\n"
+        "   - zero_add_my_rpath(): add environment variable ENV{MY_RPATH} to rpath\n"
+        "   - zero_enable_qt(): enable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC\n"
+        "   - zero_disable_qt(): disable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC\n")
 
     message(STATUS "function usage:\n"
-        "   - mzcy_add_subdirs(src): go to src/CMakeLists.txt and src/*/CMakeLists.txt\n"
-        "   - mzcy_add_subdirs_rec(src): go to src/CMakeLists.txt and src/*/*/CMakeLists.txt (recurse)\n"
-        "   - mzcy_get_files(tmp test): search source files in test/ |-> tmp\n"
-        "   - mzcy_get_files_rec(tmp test): search source files in test/ and test/*/ |-> tmp (recurse)\n")
+        "   - zero_add_subdirs(src): go to src/CMakeLists.txt and src/*/CMakeLists.txt\n"
+        "   - zero_add_subdirs_rec(src): go to src/CMakeLists.txt and src/*/*/CMakeLists.txt (recurse)\n"
+        "   - zero_get_files(tmp test): search source files in test/ |-> tmp\n"
+        "   - zero_get_files_rec(tmp test): search source files in test/ and test/*/ |-> tmp (recurse)\n")
 
     message(STATUS "target function usage:\n"
-        "   - mzcy_target_preset_definitions(targetname): add some definitions\n"
-        "     * MZCY_TARGET_NAME=targetname\n"
-        "     * MZCY_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR\n"
-        "     * MZCY_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR\n"
-        "   - mzcy_target_use_postfix(targetname): add postfix _d when Debug (default in library)\n"
-        "   - mzcy_target_reset_output(targetname RUNTIME path): change RUNTIME output to path (RUNTIME|ARCHIVE|LIBRARY)\n"
-        "   - mzcy_target_info(targetname): show target properties\n")
+        "   - zero_target_preset_definitions(targetname): add some definitions\n"
+        "     * ZERO_TARGET_NAME=targetname\n"
+        "     * ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR\n"
+        "     * ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR\n"
+        "   - zero_target_use_postfix(targetname): add postfix _d when Debug (default in library)\n"
+        "   - zero_target_reset_output(targetname RUNTIME path): change RUNTIME output to path (RUNTIME|ARCHIVE|LIBRARY)\n"
+        "   - zero_target_info(targetname): show target properties\n")
 
 endmacro()
 
-macro(mzcy_init)
-    mzcy_usage()
-    mzcy_init_quiet()
+macro(zero_init)
+    zero_usage()
+    zero_init_quiet()
 endmacro()
 
-macro(mzcy_init_quiet)
+macro(zero_init_quiet)
     message(STATUS ">> Init Project: ${PROJECT_NAME} ${PROJECT_VERSION}")
 
     if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
@@ -110,7 +110,7 @@ macro(mzcy_init_quiet)
 
 endmacro()
 
-macro(mzcy_info)
+macro(zero_info)
     message(STATUS "---------- <Check Information Begin> ----------")
     message(STATUS ">> system = ${CMAKE_SYSTEM_NAME}")
     message(STATUS ">> generator = ${CMAKE_GENERATOR}")
@@ -126,13 +126,13 @@ macro(mzcy_info)
 endmacro()
 
 
-macro(mzcy_use_bin_subdir)
+macro(zero_use_bin_subdir)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/bin/debug")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin")
 endmacro()
 
-macro(mzcy_add_my_rpath)
+macro(zero_add_my_rpath)
     if(CMAKE_SYSTEM_NAME MATCHES "Linux")
         if(DEFINED ENV{MY_RPATH})
             list(PREPEND CMAKE_BUILD_RPATH $ENV{MY_RPATH})
@@ -141,13 +141,13 @@ macro(mzcy_add_my_rpath)
     endif()
 endmacro()
 
-macro(mzcy_enable_qt)
+macro(zero_enable_qt)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTORCC ON)
 endmacro()
 
-macro(mzcy_disable_qt)
+macro(zero_disable_qt)
     set(CMAKE_AUTOMOC OFF)
     set(CMAKE_AUTOUIC OFF)
     set(CMAKE_AUTORCC OFF)
@@ -155,7 +155,7 @@ endmacro()
 
 ## functions
 
-function(mzcy_get_files rst _sources)
+function(zero_get_files rst _sources)
     set(tmp_rst "")
 
     foreach(item ${_sources})
@@ -179,7 +179,7 @@ function(mzcy_get_files rst _sources)
     set(${rst} ${tmp_rst} PARENT_SCOPE) # return
 endfunction()
 
-function(mzcy_get_files_rec rst _sources)
+function(zero_get_files_rec rst _sources)
     set(tmp_rst "")
 
     foreach(item ${_sources})
@@ -205,7 +205,7 @@ endfunction()
 
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(not recurse)
 # may not ordered as you want.
-function(mzcy_add_subdirs _path)
+function(zero_add_subdirs _path)
 	# search all subdirs
     file(GLOB children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
 	set(dirs "")
@@ -229,7 +229,7 @@ endfunction()
 
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(recurse)
 # may not ordered as you want.
-function(mzcy_add_subdirs_rec _path)
+function(zero_add_subdirs_rec _path)
 	# search all subdirs
 	file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
 	set(dirs "")
@@ -252,24 +252,24 @@ endfunction()
 
 ## target functions
 
-function(mzcy_inside_check_target _target)
+function(zero_inside_check_target _target)
     if(NOT TARGET "${_target}")
         message(FATAL_ERROR "${_target} is not a target")
     endif()
 endfunction()
 
-function(mzcy_target_preset_definitions _target)
-    mzcy_inside_check_target(${_target})
+function(zero_target_preset_definitions _target)
+    zero_inside_check_target(${_target})
 
     target_compile_definitions(${_target} PRIVATE
-        "MZCY_TARGET_NAME=\"${_target}\""
-        "MZCY_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\""
-        "MZCY_CURRENT_SOURCE_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\""
+        "ZERO_TARGET_NAME=\"${_target}\""
+        "ZERO_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\""
+        "ZERO_CURRENT_SOURCE_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\""
     )
 endfunction()
 
-function(mzcy_target_use_postfix _target)
-    mzcy_inside_check_target(${_target})
+function(zero_target_use_postfix _target)
+    zero_inside_check_target(${_target})
 
     set_target_properties(${_target}
         PROPERTIES
@@ -277,8 +277,8 @@ function(mzcy_target_use_postfix _target)
     )
 endfunction()
 
-function(mzcy_target_reset_output _target _type _path)
-    mzcy_inside_check_target(${_target})
+function(zero_target_reset_output _target _type _path)
+    zero_inside_check_target(${_target})
 
     string(TOUPPER "${_type}" _type)
 
@@ -309,7 +309,7 @@ function(mzcy_target_reset_output _target _type _path)
 
 endfunction()
 
-function(mzcy_inside_list_print)
+function(zero_inside_list_print)
     # TITLE
     # PREFIX a
     # STRS a;b;c
@@ -337,25 +337,25 @@ function(mzcy_inside_list_print)
 
 endfunction()
 
-function(mzcy_inside_print_property _target _porperty)
+function(zero_inside_print_property _target _porperty)
     string(TOUPPER "${_porperty}" _porperty)
 
     get_target_property(tmp ${_target} ${_porperty})
     if(NOT (tmp STREQUAL "tmp-NOTFOUND"))
         string(TOLOWER "${_porperty}" porperty_lower)
-        mzcy_inside_list_print(STRS "${tmp}" TITLE  "${porperty_lower}:" PREFIX "  * ")
+        zero_inside_list_print(STRS "${tmp}" TITLE  "${porperty_lower}:" PREFIX "  * ")
     endif()
 
     get_target_property(tmp ${_target} INTERFACE_${_porperty})
     if(NOT (tmp STREQUAL "tmp-NOTFOUND"))
         string(TOLOWER "${_porperty}" porperty_lower)
-        mzcy_inside_list_print(STRS "${tmp}" TITLE  "interface_${porperty_lower}:" PREFIX "  * ")
+        zero_inside_list_print(STRS "${tmp}" TITLE  "interface_${porperty_lower}:" PREFIX "  * ")
     endif()
 
 endfunction()
 
-function(mzcy_target_info _target)
-    mzcy_inside_check_target(${_target})
+function(zero_target_info _target)
+    zero_inside_check_target(${_target})
 
     message(STATUS "---------- <Check Target Begin> ----------")
     message(STATUS "name: ${_target}")
@@ -367,13 +367,13 @@ function(mzcy_target_info _target)
     get_target_property(tmp ${_target} SOURCE_DIR)
     message(STATUS "location: ${tmp}")
 
-    mzcy_inside_print_property(${_target} SOURCES)
-    mzcy_inside_print_property(${_target} INCLUDE_DIRECTORIES)
-    mzcy_inside_print_property(${_target} LINK_DIRECTORIES)
-    mzcy_inside_print_property(${_target} LINK_LIBRARIES)
-    mzcy_inside_print_property(${_target} LINK_OPTIONS)
-    mzcy_inside_print_property(${_target} COMPILE_OPTIONS)
-    mzcy_inside_print_property(${_target} COMPILE_DEFINITIONS)
+    zero_inside_print_property(${_target} SOURCES)
+    zero_inside_print_property(${_target} INCLUDE_DIRECTORIES)
+    zero_inside_print_property(${_target} LINK_DIRECTORIES)
+    zero_inside_print_property(${_target} LINK_LIBRARIES)
+    zero_inside_print_property(${_target} LINK_OPTIONS)
+    zero_inside_print_property(${_target} COMPILE_OPTIONS)
+    zero_inside_print_property(${_target} COMPILE_DEFINITIONS)
 
     message(STATUS "------------------------------------------")
 endfunction()

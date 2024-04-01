@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(MzcyCMakeUtils VERSION 1.0)
+project(CMakeZero VERSION 1.0)
 
 # set(CMAKE_MODULE_PATH "$ENV{MY_CMAKE_MODULE_PATH}")
-# include(mzcy_utils)
+# include(zero.cmake)
 
-# include(cmake/mzcy_utils.cmake)
-include(cmake/mzcy_utils-beta.cmake)
+include(cmake/zero.cmake)
 
-mzcy_init()
-mzcy_info()
+zero_init()
 
-mzcy_add_subdirs_rec(source)
+zero_info()
+
+zero_add_subdirs_rec(source)
