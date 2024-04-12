@@ -1,4 +1,4 @@
-#include "fun_head_only.h"
+#include "fun_ho.h"
 #include <cstdio>
 
 int main(){
