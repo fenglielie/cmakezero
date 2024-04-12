@@ -1,12 +1,6 @@
-.vscode/
-.ignore/
 .cache/
+.ignore/
 
 bin/
-bin_test/
-testbin/
-
 build/
 lib/
-
-.ignore/
