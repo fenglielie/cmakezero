@@ -10,4 +10,8 @@ zero_init()
 
 zero_info()
 
-zero_add_subdirs_rec(source)
+zero_add_subdirs_rec(src)
+
+include(CTest)
+
+zero_add_subdirs_rec(test)
