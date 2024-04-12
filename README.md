@@ -172,3 +172,20 @@ function(zero_target_reset_output _target _type _path)
 ```cmake
 function(zero_target_info _target)
 ```
+
+## 使用示例
+
+将`zero.cmake`文件放置在项目根目录下的`cmake/`子目录中，并在项目根目录下的CMakeLists.txt导入，然后即可正常使用
+
+```cmake
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+project(Demo VERSION 1.0)
+
+include(cmake/zero.cmake)
+
+zero_init()
+
+zero_info()
+
+zero_add_subdirs_rec(source)
+```
