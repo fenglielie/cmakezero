@@ -2,12 +2,14 @@
 
 CMakeZero 是一个 CMake 工具脚本，
 提供一系列的宏和函数，包括执行常见的任务，例如设置输出目录、添加并遍历子目录、打印并检查信息等，
-可以用于简化项目配置和构建过程，让CMakeLists.txt更加简洁。
+可以用于简化项目配置和构建过程，省略很多重复性内容，让CMakeLists.txt的编写更加简洁。
 
 
-## 使用说明——通用宏
+## 说明文档
 
-### `zero_usage`
+### 通用宏
+
+#### `zero_usage`
 
 显示CMakeZero自带的使用说明
 
@@ -44,7 +46,7 @@ macro(zero_usage)
 
 
 
-### `zero_init`/`zero_init_quiet`
+#### `zero_init`/`zero_init_quiet`
 
 调用`zero_usage`来显示使用说明，然后对项目进行一些初始化设置，例如：
 
@@ -64,7 +66,7 @@ macro(zero_init_quiet)
 
 要求在`project(...)`命令之后调用。
 
-### `zero_info`
+#### `zero_info`
 
 显示项目相关信息，例如
 
@@ -77,7 +79,7 @@ macro(zero_init_quiet)
 macro(zero_info)
 ```
 
-### `zero_use_bin_subdir`
+#### `zero_use_bin_subdir`
 
 将debug模式下的可执行文件输出目录修改为`bin/debug/`，默认为`bin/`。
 
@@ -85,7 +87,7 @@ macro(zero_info)
 macro(zero_use_bin_subdir)
 ```
 
-### `zero_add_my_rpath`
+#### `zero_add_my_rpath`
 
 如果当前是Linux系统，将环境变量 `MY_RPATH` 添加到 rpath，以便在运行时优先查找到指定版本的依赖项，例如在系统中存在不同版本的C++标准库时。
 
@@ -93,7 +95,7 @@ macro(zero_use_bin_subdir)
 macro(zero_add_my_rpath)
 ```
 
-### `zero_enable_qt`/`zero_disable_qt`
+#### `zero_enable_qt`/`zero_disable_qt`
 
 启用或禁用 Qt 相关的 CMake 支持，包括：`CMAKE_AUTOMOC`, `CMAKE_AUTOUIC`, `CMAKE_AUTORCC`。
 
@@ -103,9 +105,9 @@ macro(zero_enable_qt)
 macro(zero_disable_qt)
 ```
 
-## 使用说明——通用函数
+### 通用函数
 
-### `zero_get_files`/`zero_get_files_rec`
+#### `zero_get_files`/`zero_get_files_rec`
 
 在指定目录中按照若干文件后缀来搜索源文件，并通过参数返回。`zero_get_files_rec`是`zero_get_files`的递归版本。
 
@@ -120,7 +122,7 @@ function(zero_get_files_rec rst _sources)
 zero_get_files(tmp test)
 ```
 
-### `zero_add_subdirs`/`zero_add_subdirs_rec`
+#### `zero_add_subdirs`/`zero_add_subdirs_rec`
 
 添加指定目录及其子目录中包含的 CMakeLists.txt，然后会依次进入相应的目录执行 CMakeList.txt。`zero_add_subdirs_rec`是`zero_add_subdirs`的递归版本。
 
@@ -135,9 +137,9 @@ function(zero_add_subdirs_rec _path)
 zero_add_subdirs_rec(src)
 ```
 
-## 使用说明——关于指定target的函数
+### 关于指定target的函数
 
-### `zero_target_preset_definitions`
+#### `zero_target_preset_definitions`
 
 为指定目标添加如下的预定义宏：
 
@@ -149,7 +151,7 @@ zero_add_subdirs_rec(src)
 function(zero_target_preset_definitions _target)
 ```
 
-### `zero_target_use_postfix`
+#### `zero_target_use_postfix`
 
 为指定目标在 Debug 模式下添加`_d`后缀，这个行为对于库文件是默认的，但是对于可执行文件是可选的。
 
@@ -157,7 +159,7 @@ function(zero_target_preset_definitions _target)
 function(zero_target_use_postfix _target)
 ```
 
-### `zero_target_reset_output`
+#### `zero_target_reset_output`
 
 指定当前目标的输出路径，需要在`_type`参数中提供目标类型，支持RUNTIME、ARCHIVE或LIBRARY。
 
@@ -165,7 +167,7 @@ function(zero_target_use_postfix _target)
 function(zero_target_reset_output _target _type _path)
 ```
 
-### `zero_target_info`
+#### `zero_target_info`
 
 显示指定目标的属性信息，尤其在调试时有用。
 
@@ -173,10 +175,16 @@ function(zero_target_reset_output _target _type _path)
 function(zero_target_info _target)
 ```
 
+
 ## 使用示例
 
-将`zero.cmake`文件放置在项目根目录下的`cmake/`子目录中，并在项目根目录下的CMakeLists.txt导入，然后即可正常使用
+手动下载[zero.cmake](cmake/zero.cmake)文件并放置在项目根目录下的`cmake/`子目录中，
+也可以使用下面的命令下载
+```
+wget https://raw.githubusercontent.com/fenglielie/cmakezero/main/cmake/zero.cmake
+```
 
+然后在项目根目录下的CMakeLists.txt导入
 ```cmake
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(Demo VERSION 1.0)
@@ -184,8 +192,21 @@ project(Demo VERSION 1.0)
 include(cmake/zero.cmake)
 
 zero_init()
-
 zero_info()
 
-zero_add_subdirs_rec(source)
+zero_add_subdirs_rec(src)
+```
+
+此后即可使用zero.cmake提供的函数和宏来简化CMakeLists.txt的编写，
+例如使用当前目录（以及递归的子目录）的所有源文件生成一个可执行文件target
+```cmake
+zero_get_files_rec(SRCS .)
+add_executable(test ${SRCS})
+```
+或者
+```cmake
+zero_get_files_rec(SRCS .)
+add_executable(test ${SRCS})
+zero_target_preset_definitions(test)
+zero_target_info(test)
 ```

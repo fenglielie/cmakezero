@@ -206,23 +206,23 @@ endfunction()
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(not recurse)
 # may not ordered as you want.
 function(zero_add_subdirs _path)
-	# search all subdirs
+    # search all subdirs
     file(GLOB children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
-	set(dirs "")
-	list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
+    set(dirs "")
+    list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
 
     # append to dirs if contains CMakeLists.txt
     foreach(item ${children})
-		if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
-			list(APPEND dirs ${item})
-		endif()
-	endforeach()
+        if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
+            list(APPEND dirs ${item})
+        endif()
+    endforeach()
 
     # go to subdirs
     foreach(dir ${dirs})
         message(STATUS ">> Go to ${dir}")
-		add_subdirectory(${dir})
-	endforeach()
+        add_subdirectory(${dir})
+    endforeach()
 
 endfunction()
 
@@ -230,23 +230,23 @@ endfunction()
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(recurse)
 # may not ordered as you want.
 function(zero_add_subdirs_rec _path)
-	# search all subdirs
-	file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
-	set(dirs "")
-	list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
+    # search all subdirs
+    file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
+    set(dirs "")
+    list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
 
     # append to dirs if contains CMakeLists.txt
     foreach(item ${children})
-		if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
-			list(APPEND dirs ${item})
-		endif()
-	endforeach()
+        if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
+            list(APPEND dirs ${item})
+        endif()
+    endforeach()
 
     # go to subdirs
-	foreach(dir ${dirs})
-		message(STATUS ">> Go to ${dir}")
-		add_subdirectory(${dir})
-	endforeach()
+    foreach(dir ${dirs})
+        message(STATUS ">> Go to ${dir}")
+        add_subdirectory(${dir})
+    endforeach()
 
 endfunction()
 
