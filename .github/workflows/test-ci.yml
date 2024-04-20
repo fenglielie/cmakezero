@@ -25,5 +25,5 @@ jobs:
     name: run bvt with clang 18
 
   run-bvt-msvc14:
-    uses: ./.github/workflows/bvt-msvc17.yml
-    name: run bvt with msvc17 (vs2022)
+    uses: ./.github/workflows/bvt-msvc14.yml
+    name: run bvt with msvc14 (vs2022)
