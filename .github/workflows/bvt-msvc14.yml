@@ -18,7 +18,7 @@ jobs:
     - name: build with cmake
       run: |
         cmake . -B build
-        cmake --build ./build -j8
+        cmake --build ./build -j8 --config Release
 
     - name: run tests
       run: |
