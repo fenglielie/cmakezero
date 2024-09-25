@@ -1,5 +1,5 @@
 # zero.cmake
-# 2024-04-01
+# 2024-09-25
 ## marcos
 
 macro(zero_usage)
@@ -84,7 +84,6 @@ macro(zero_init_quiet)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-
     # c/c++ compile flags
     if (("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
         set(common_flags  "-Wall -Wextra -Wfatal-errors -Wshadow -Wno-unused-parameter")
@@ -105,8 +104,6 @@ macro(zero_init_quiet)
     # release default: -O3 -DNDEBUG
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${common_flags}")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${common_flags}")
-
-
 
 endmacro()
 
