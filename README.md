@@ -1,190 +1,43 @@
 # CMakeZero
 
-CMakeZero 是一个 CMake 工具脚本，
-提供一系列的宏和函数，包括执行常见的任务，例如设置输出目录、添加并遍历子目录、打印并检查信息等，
-可以用于简化项目配置和构建过程，省略很多重复性内容，让CMakeLists.txt的编写更加简洁。
+CMakeZero is a CMake script that simplifies the setup and management of CMake projects. It provides macros and functions to streamline common tasks in CMake projects.
+
+## Usage
+
+### Macros
+
+- **`zero_usage()`**: Print usage information.
+- **`zero_init()`**: Print usage and initialize the project (call after `project`).
+- **`zero_init_quiet()`**: Initialize the project (call after `project`).
+- **`zero_info()`**: Show information about the current project setup.
+- **`zero_use_bin_subdir()`**: Use `bin/debug` as the runtime output directory when in Debug mode.
+
+### Functions
+
+- **`zero_add_subdirs(src)`**: Navigate to `src/CMakeLists.txt` and all `src/*/CMakeLists.txt`.
+- **`zero_add_subdirs_rec(src)`**: Navigate to `src/CMakeLists.txt` and all `src/*/*/CMakeLists.txt` (recursive).
+- **`zero_get_files(tmp test)`**: Search for source files in the `test/` directory and store them in `tmp`.
+- **`zero_get_files_rec(tmp test)`**: Search for source files in the `test/` directory and all its subdirectories, storing results in `tmp` (recursive).
+
+### Target Functions
+
+- **`zero_target_preset_definitions(targetname)`**: Add predefined compiler definitions for the target.
+  - `ZERO_TARGET_NAME=targetname`
+  - `ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR`
+  - `ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR`
+- **`zero_target_use_postfix(targetname)`**: Append `_d` to the target name when in Debug mode (default for libraries).
+- **`zero_target_reset_output(targetname RUNTIME path)`**: Change the RUNTIME output directory to `path` (can be RUNTIME, ARCHIVE, or LIBRARY).
+- **`zero_target_info(targetname)`**: Display properties of the specified target.
 
 
-## 说明文档
+## Example
 
-### 通用宏
-
-#### `zero_usage`
-
-显示CMakeZero自带的使用说明
-
-```cmake
-macro(zero_usage)
-```
-
-内容如下
-
-* macro usage:
-    * **zero_init()**: print usage, init the project (call after project)
-    * **zero_init_quiet()**: init the project  (call after project)
-    * **zero_info()**: show infomation
-    * **zero_usage()**: print this usage
-    * **zero_use_bin_subdir()**: use bin/debug as runtime output directory when Debug
-    * **zero_add_my_rpath()**: add environment variable ENV{MY_RPATH} to rpath
-    * **zero_enable_qt()**: enable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC
-    * **zero_disable_qt()**: disable CMAKE_AUTOMOC,CMAKE_AUTOUIC,CMAKE_AUTORCC
-
-* function usage:
-    * **zero_add_subdirs(src)**: go to src/CMakeLists.txt and src/*/CMakeLists.txt
-    * **zero_add_subdirs_rec(src)**: go to src/CMakeLists.txt and src/*/*/CMakeLists.txt (recurse)
-    * **zero_get_files(tmp test)**: search source files in test/ |*> tmp
-    * **zero_get_files_rec(tmp test)**: search source files in test/ and test/*/ |*> tmp (recurse)
-
-* target function usage:
-    * **zero_target_preset_definitions(targetname)**: add some definitions
-        * ZERO_TARGET_NAME=targetname
-        * ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR
-        * ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR
-    * **zero_target_use_postfix(targetname)**: add postfix _d when Debug (default in library)
-    * **zero_target_reset_output(targetname RUNTIME path)**: change RUNTIME output to path (RUNTIME|ARCHIVE|LIBRARY)
-    * **zero_target_info(targetname)**: show target properties
-
-
-
-#### `zero_init`/`zero_init_quiet`
-
-调用`zero_usage`来显示使用说明，然后对项目进行一些初始化设置，例如：
-
-- 设置可执行文件，库文件的输出目录
-- 设置默认模式为Release
-- 设置C++标准，禁用C++扩展等
-- 禁止在项目根目录进行配置，这会产生大量临时文件污染项目，建议使用`build/`子目录
-- 设置编译器参数，支持MSVC，clang，gcc
-
-`zero_init_quiet`是`zero_init`的静默版本，不会调用`zero_usage`。
-
-```cmake
-macro(zero_init)
-
-macro(zero_init_quiet)
-```
-
-要求在`project(...)`命令之后调用。
-
-#### `zero_info`
-
-显示项目相关信息，例如
-
-- 系统信息
-- 编译器名称及版本
-- 构建类型
-- c_flags 和 cxx_flags 等编译器参数
-
-```cmake
-macro(zero_info)
-```
-
-#### `zero_use_bin_subdir`
-
-将debug模式下的可执行文件输出目录修改为`bin/debug/`，默认为`bin/`。
-
-```cmake
-macro(zero_use_bin_subdir)
-```
-
-#### `zero_add_my_rpath`
-
-如果当前是Linux系统，将环境变量 `MY_RPATH` 添加到 rpath，以便在运行时优先查找到指定版本的依赖项，例如在系统中存在不同版本的C++标准库时。
-
-```cmake
-macro(zero_add_my_rpath)
-```
-
-#### `zero_enable_qt`/`zero_disable_qt`
-
-启用或禁用 Qt 相关的 CMake 支持，包括：`CMAKE_AUTOMOC`, `CMAKE_AUTOUIC`, `CMAKE_AUTORCC`。
-
-```cmake
-macro(zero_enable_qt)
-
-macro(zero_disable_qt)
-```
-
-### 通用函数
-
-#### `zero_get_files`/`zero_get_files_rec`
-
-在指定目录中按照若干文件后缀来搜索源文件，并通过参数返回。`zero_get_files_rec`是`zero_get_files`的递归版本。
-
-```cmake
-function(zero_get_files rst _sources)
-
-function(zero_get_files_rec rst _sources)
-```
-
-例如添加`test/`中的所有源文件到`tmp`中
-```cmake
-zero_get_files(tmp test)
-```
-
-#### `zero_add_subdirs`/`zero_add_subdirs_rec`
-
-添加指定目录及其子目录中包含的 CMakeLists.txt，然后会依次进入相应的目录执行 CMakeList.txt。`zero_add_subdirs_rec`是`zero_add_subdirs`的递归版本。
-
-```cmake
-function(zero_add_subdirs _path)
-
-function(zero_add_subdirs_rec _path)
-```
-
-例如在顶级目录中使用
-```cmake
-zero_add_subdirs_rec(src)
-```
-
-### 关于指定target的函数
-
-#### `zero_target_preset_definitions`
-
-为指定目标添加如下的预定义宏：
-
-- `ZERO_TARGET_NAME=targetname`
-- `ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR`
-- `ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR`
-
-```cmake
-function(zero_target_preset_definitions _target)
-```
-
-#### `zero_target_use_postfix`
-
-为指定目标在 Debug 模式下添加`_d`后缀，这个行为对于库文件是默认的，但是对于可执行文件是可选的。
-
-```cmake
-function(zero_target_use_postfix _target)
-```
-
-#### `zero_target_reset_output`
-
-指定当前目标的输出路径，需要在`_type`参数中提供目标类型，支持RUNTIME、ARCHIVE或LIBRARY。
-
-```cmake
-function(zero_target_reset_output _target _type _path)
-```
-
-#### `zero_target_info`
-
-显示指定目标的属性信息，尤其在调试时有用。
-
-```cmake
-function(zero_target_info _target)
-```
-
-
-## 使用示例
-
-手动下载[zero.cmake](cmake/zero.cmake)文件并放置在项目根目录下的`cmake/`子目录中，
-也可以使用下面的命令下载
+Manually download the [zero.cmake](cmake/zero.cmake) file and place it in the `cmake/` subdirectory of your project root. You can also download it using the following command:
 ```
 wget https://raw.githubusercontent.com/fenglielie/cmakezero/main/cmake/zero.cmake
 ```
 
-然后在项目根目录下的CMakeLists.txt导入
+Then, import it in the `CMakeLists.txt` located in your project root:
 ```cmake
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(Demo VERSION 1.0)
@@ -197,13 +50,13 @@ zero_info()
 zero_add_subdirs_rec(src)
 ```
 
-此后即可使用zero.cmake提供的函数和宏来简化CMakeLists.txt的编写，
-例如使用当前目录（以及递归的子目录）的所有源文件生成一个可执行文件target
+After that, you can use the functions and macros provided by `zero.cmake` to simplify the writing of your `CMakeLists.txt`.
+For example, to generate an executable target using all source files in the current directory (and recursive subdirectories):
 ```cmake
 zero_get_files_rec(SRCS .)
 add_executable(test ${SRCS})
 ```
-或者
+Or:
 ```cmake
 zero_get_files_rec(SRCS .)
 add_executable(test ${SRCS})
