@@ -10,7 +10,7 @@ CMakeZero is a CMake script that simplifies the setup and management of CMake pr
 - **`zero_init()`**: Print usage and initialize the project (call after `project`).
 - **`zero_init_quiet()`**: Initialize the project (call after `project`).
 - **`zero_info()`**: Show information about the current project setup.
-- **`zero_use_bin_subdir()`**: Use `bin/debug` as the runtime output directory when in Debug mode.
+- **`zero_check_update()`**: Check update of zero.cmake.
 
 ### Functions
 
@@ -25,8 +25,6 @@ CMakeZero is a CMake script that simplifies the setup and management of CMake pr
   - `ZERO_TARGET_NAME=targetname`
   - `ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR`
   - `ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR`
-- **`zero_target_use_postfix(targetname)`**: Append `_d` to the target name when in Debug mode (default for libraries).
-- **`zero_target_reset_output(targetname RUNTIME path)`**: Change the RUNTIME output directory to `path` (can be RUNTIME, ARCHIVE, or LIBRARY).
 - **`zero_target_info(targetname)`**: Display properties of the specified target.
 
 
@@ -48,6 +46,8 @@ zero_init()
 zero_info()
 
 zero_add_subdirs_rec(src)
+
+zero_check_update()
 ```
 
 After that, you can use the functions and macros provided by `zero.cmake` to simplify the writing of your `CMakeLists.txt`.

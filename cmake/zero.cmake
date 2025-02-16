@@ -1,6 +1,6 @@
 # zero.cmake
 # fenglielie@qq.com
-# 2024-11-04
+# 2025-02-17
 
 ## marcos
 
@@ -8,7 +8,7 @@ macro(zero_usage)
     message(STATUS "\n"
         "    ###################################\n"
         "    #                                 #\n"
-        "    #          CMakeZero 1.1          #\n"
+        "    #          CMakeZero 1.2          #\n"
         "    #                                 #\n"
         "    ###################################\n")
 
@@ -17,7 +17,7 @@ macro(zero_usage)
         "   - zero_init(): print usage, then init the project (call after project)\n"
         "   - zero_init_quiet(): init the project (call after project)\n"
         "   - zero_info(): show infomation\n"
-        "   - zero_use_bin_subdir(): use bin/debug as runtime output directory when debug\n")
+        "   - zero_check_update(): check update of zero.cmake\n")
 
     message(STATUS "function usage:\n"
         "   - zero_add_subdirs(src): go to src/CMakeLists.txt and src/*/CMakeLists.txt\n"
@@ -30,8 +30,6 @@ macro(zero_usage)
         "     * ZERO_TARGET_NAME=targetname\n"
         "     * ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR\n"
         "     * ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR\n"
-        "   - zero_target_use_postfix(targetname): add postfix _d when Debug (default for library)\n"
-        "   - zero_target_reset_output(targetname RUNTIME path): change RUNTIME(|ARCHIVE|LIBRARY) output to path\n"
         "   - zero_target_info(targetname): show target properties\n")
 
 endmacro()
@@ -92,17 +90,8 @@ macro(zero_init_quiet)
         set(common_flags "")
     endif()
 
-    # empty
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${common_flags}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${common_flags}")
-
-    # debug default: -g
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${common_flags}")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${common_flags}")
-
-    # release default: -O3 -DNDEBUG
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${common_flags}")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${common_flags}")
 
 endmacro()
 
@@ -118,13 +107,55 @@ macro(zero_info)
     message(STATUS ">> cxx_flags_release = " ${CMAKE_CXX_FLAGS_RELEASE})
     message(STATUS ">> linker = ${CMAKE_LINKER}")
     message(STATUS ">> exe_linker_flags = ${CMAKE_EXE_LINKER_FLAGS}")
+    message(STATUS ">> source_dir = ${PROJECT_SOURCE_DIR}")
+    message(STATUS ">> binary_dir = ${CMAKE_BINARY_DIR}")
+    message(STATUS ">> install_prefix = ${CMAKE_INSTALL_PREFIX}")
     message(STATUS "-----------------------------------------------")
 endmacro()
 
-macro(zero_use_bin_subdir)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_SOURCE_DIR}/bin/debug")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_SOURCE_DIR}/bin")
+macro(zero_check_update)
+    set(TEMP_FILE "${CMAKE_BINARY_DIR}/zero.cmake.tmp")
+    set(REMOTE_URL "https://raw.githubusercontent.com/fenglielie/cmakezero/main/cmake/zero.cmake")
+    set(LOCAL_FILE "${PROJECT_SOURCE_DIR}/cmake/zero.cmake")
+    set(LOCAL_FILE_NAME "zero.cmake")
+
+    set(ZERO_CMAKE_REMOTE_HASH "" CACHE STRING "Cached hash of remote version of zero.cmake")
+
+    # Return if local file doesn't exist
+    if(NOT (EXISTS "${LOCAL_FILE}"))
+        message(WARNING "Local file ${LOCAL_FILE_NAME} does not exist.")
+        return()
+    endif()
+
+    file(SHA256 "${LOCAL_FILE}" LOCAL_HASH)
+
+    # Skip download if local file matches remote hash
+    if("${LOCAL_HASH}" STREQUAL "${ZERO_CMAKE_REMOTE_HASH}")
+        message(STATUS ">> Local file ${LOCAL_FILE_NAME} is up-to-date.")
+        return()
+    endif()
+
+    # Download remote file
+    message(STATUS ">> Downloading ${REMOTE_URL}")
+    file(DOWNLOAD "${REMOTE_URL}" "${TEMP_FILE}" STATUS DOWNLOAD_STATUS SHOW_PROGRESS TIMEOUT 20)
+
+    # Check if download was successful
+    list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
+    if(NOT DOWNLOAD_RESULT EQUAL 0)
+        message(STATUS ">> Failed to download. Status: ${DOWNLOAD_STATUS}")
+        message(STATUS ">> Don't worry, failure of the script to check for updates has no impact on the build.")
+        return()
+    endif()
+
+    file(SHA256 "${TEMP_FILE}" REMOTE_HASH)
+    set(ZERO_CMAKE_REMOTE_HASH "${REMOTE_HASH}" CACHE STRING "Cached hash of remote version of zero.cmake" FORCE)
+
+    # Compare local and remote hashes
+    if(NOT "${LOCAL_HASH}" STREQUAL "${REMOTE_HASH}")
+        message(WARNING "Local file is outdated. A new version is ${TEMP_FILE}.")
+    else()
+        message(STATUS ">> Local file ${LOCAL_FILE_NAME} is up-to-date.")
+    endif()
 endmacro()
 
 ## functions
@@ -137,7 +168,6 @@ function(zero_get_files rst _sources)
             file(GLOB itemSrcs CONFIGURE_DEPENDS
                 ${item}/*.c ${item}/*.C ${item}/*.cc ${item}/*.cpp ${item}/*.cxx
                 ${item}/*.h ${item}/*.hpp
-                ${item}/*.f90
             )
             list(APPEND tmp_rst ${itemSrcs})
         else() # item is file
@@ -161,7 +191,6 @@ function(zero_get_files_rec rst _sources)
             file(GLOB_RECURSE itemSrcs CONFIGURE_DEPENDS
                 ${item}/*.c ${item}/*.C ${item}/*.cc ${item}/*.cpp ${item}/*.cxx
                 ${item}/*.h ${item}/*.hpp
-                ${item}/*.f90
             )
             list(APPEND tmp_rst ${itemSrcs})
         else() # item is file
@@ -239,47 +268,6 @@ function(zero_target_preset_definitions _target)
         "ZERO_PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\""
         "ZERO_CURRENT_SOURCE_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\""
     )
-endfunction()
-
-function(zero_target_use_postfix _target)
-    zero_inside_check_target(${_target})
-
-    set_target_properties(${_target}
-        PROPERTIES
-        DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX}
-    )
-endfunction()
-
-function(zero_target_reset_output _target _type _path)
-    zero_inside_check_target(${_target})
-
-    string(TOUPPER "${_type}" _type)
-
-    if(${_type} STREQUAL "RUNTIME")
-        set_target_properties(${_target}
-            PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${_path}"
-            RUNTIME_OUTPUT_DIRECTORY_DEBUG "${_path}"
-            RUNTIME_OUTPUT_DIRECTORY_RELEASE "${_path}"
-        )
-    elseif(${_type} STREQUAL "ARCHIVE")
-        set_target_properties(${_target}
-            PROPERTIES
-            ARCHIVE_OUTPUT_DIRECTORY "${_path}"
-            ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${_path}"
-            ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${_path}"
-        )
-    elseif(${_type} STREQUAL "LIBRARY")
-        set_target_properties(${_target}
-            PROPERTIES
-            LIBRARY_OUTPUT_DIRECTORY "${_path}"
-            LIBRARY_OUTPUT_DIRECTORY_DEBUG "${_path}"
-            LIBRARY_OUTPUT_DIRECTORY_RELEASE "${_path}"
-    )
-    else()
-        message(FATAL_ERROR "illegal type ${_type} (RUNTIME|ARCHIVE|LIBRARY)")
-    endif()
-
 endfunction()
 
 function(zero_inside_list_print)

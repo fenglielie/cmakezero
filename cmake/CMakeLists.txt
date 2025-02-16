@@ -51,14 +51,6 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${common_flags}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${common_flags}")
 
-# debug default: -g
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${common_flags}")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${common_flags}")
-
-# release default: -O3 -DNDEBUG
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${common_flags}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${common_flags}")
-
 # add a executable target
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.cpp include/*.h)
 add_executable(${PROJECT_NAME} ${SRCS})

@@ -15,3 +15,5 @@ zero_add_subdirs_rec(src)
 include(CTest)
 
 zero_add_subdirs_rec(test)
+
+zero_check_update()
