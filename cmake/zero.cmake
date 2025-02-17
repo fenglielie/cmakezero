@@ -86,7 +86,7 @@ macro(zero_init_quiet)
 
     # c/c++ compile flags
     if (("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
-        set(common_flags "-Wall -Wextra -Wfatal-errors -Wshadow -Wconversion -Wsign-conversion -Wuninitialized -Wmaybe-uninitialized -pedantic -Wno-unused-parameter")
+        set(common_flags "-Wall -Wextra -Wfatal-errors -Wshadow -Wconversion -Wsign-conversion -Wuninitialized -pedantic -Wno-unused-parameter")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(common_flags "/W3 /WX /MP /utf-8 /permissive- /Zc:__cplusplus")
     else()
