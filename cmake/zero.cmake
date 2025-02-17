@@ -1,6 +1,10 @@
 # zero.cmake
 # fenglielie@qq.com
 # 2025-02-17
+# version 1.2
+
+set(ZERO_CMAKE_VERSION "1.2" CACHE STRING "Version of zero.cmake. (set by zero.cmake)" FORCE)
+set(ZERO_CMAKE_FILE "${CMAKE_CURRENT_LIST_FILE}" CACHE PATH "Path to zero.cmake. (set by zero.cmake)" FORCE)
 
 ## marcos
 
@@ -8,25 +12,25 @@ macro(zero_usage)
     message(STATUS "\n"
         "    ###################################\n"
         "    #                                 #\n"
-        "    #          CMakeZero 1.2          #\n"
+        "    #          CMakeZero ${ZERO_CMAKE_VERSION}          #\n"
         "    #                                 #\n"
         "    ###################################\n")
 
     message(STATUS "macro usage:\n"
-        "   - zero_usage(): print this usage\n"
+        "   - zero_usage(): print usage\n"
         "   - zero_init(): print usage, then init the project (call after project)\n"
         "   - zero_init_quiet(): init the project (call after project)\n"
         "   - zero_info(): show infomation\n"
-        "   - zero_check_update(): check update of zero.cmake\n")
+        "   - zero_check_update(): check for updates to zero.cmake\n")
 
     message(STATUS "function usage:\n"
         "   - zero_add_subdirs(src): go to src/CMakeLists.txt and src/*/CMakeLists.txt\n"
         "   - zero_add_subdirs_rec(src): go to src/CMakeLists.txt and src/*/*/CMakeLists.txt (recurse)\n"
-        "   - zero_get_files(tmp test): search source files in test/ |-> tmp\n"
-        "   - zero_get_files_rec(tmp test): search source files in test/ and test/*/ |-> tmp (recurse)\n")
+        "   - zero_get_files(tmp test): search source files in test/ => tmp\n"
+        "   - zero_get_files_rec(tmp test): search source files in test/ and test/*/ => tmp (recurse)\n")
 
     message(STATUS "target function usage:\n"
-        "   - zero_target_preset_definitions(targetname): add some definitions\n"
+        "   - zero_target_preset_definitions(targetname): add some compile definitions\n"
         "     * ZERO_TARGET_NAME=targetname\n"
         "     * ZERO_PROJECT_SOURCE_DIR=PROJECT_SOURCE_DIR\n"
         "     * ZERO_CURRENT_SOURCE_DIR=CMAKE_CURRENT_SOURCE_DIR\n"
@@ -40,31 +44,30 @@ macro(zero_init)
 endmacro()
 
 macro(zero_init_quiet)
-    message(STATUS ">> Init Project: ${PROJECT_NAME} ${PROJECT_VERSION}")
+    message(STATUS ">> Init Project: ${PROJECT_NAME} ${PROJECT_VERSION} (supported by zero.cmake)")
 
     if(PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
         message(FATAL_ERROR "The binary directory cannot be the same as source directory")
     endif()
 
     if(NOT CMAKE_BUILD_TYPE)
-        message(STATUS ">> default CMAKE_BUILD_TYPE: \"Release\"")
-        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+        message(STATUS ">> Set CMAKE_BUILD_TYPE = Release (default)")
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel. (set by zero.cmake)" FORCE)
     endif()
 
     # keep use folders in build/
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
     # create compile_commands.json in build/
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Export compile commands to compile_commands.json. (set by zero.cmake)" FORCE)
 
-    # c++ standard = C++20(required)
+    # c++ standard = C++20 (required)
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 
-    # libfunc
-    # libfunc (release)
-    set(CMAKE_DEBUG_POSTFIX "_d") # libfunc_d (debug)
+    # libfunc_d (debug) / libfunc (release)
+    set(CMAKE_DEBUG_POSTFIX "_d")
 
     # ./bin
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
@@ -114,47 +117,47 @@ macro(zero_info)
 endmacro()
 
 macro(zero_check_update)
-    set(TEMP_FILE "${CMAKE_BINARY_DIR}/zero.cmake.tmp")
+    set(TEMP_FILE "${CMAKE_BINARY_DIR}/zero.cmake")
     set(REMOTE_URL "https://raw.githubusercontent.com/fenglielie/cmakezero/main/cmake/zero.cmake")
-    set(LOCAL_FILE "${PROJECT_SOURCE_DIR}/cmake/zero.cmake")
-    set(LOCAL_FILE_NAME "zero.cmake")
 
-    set(ZERO_CMAKE_REMOTE_HASH "" CACHE STRING "Cached hash of remote version of zero.cmake")
+    set(LOCAL_FILE "${ZERO_CMAKE_FILE}")
+
+    set(ZERO_CMAKE_REMOTE_HASH "" CACHE STRING "Cached hash of the remote zero.cmake. (set by zero.cmake)")
 
     # Return if local file doesn't exist
     if(NOT (EXISTS "${LOCAL_FILE}"))
-        message(WARNING "Local file ${LOCAL_FILE_NAME} does not exist.")
+        message(WARNING "Local file ${LOCAL_FILE} does not exist.")
         return()
     endif()
 
     file(SHA256 "${LOCAL_FILE}" LOCAL_HASH)
 
-    # Skip download if local file matches remote hash
+    # Skip download if the local file matches the cached remote hash
     if("${LOCAL_HASH}" STREQUAL "${ZERO_CMAKE_REMOTE_HASH}")
-        message(STATUS ">> Local file ${LOCAL_FILE_NAME} is up-to-date.")
+        message(STATUS ">> ${LOCAL_FILE} is up to date.")
         return()
     endif()
 
-    # Download remote file
+    # Download the remote file
     message(STATUS ">> Downloading ${REMOTE_URL}")
     file(DOWNLOAD "${REMOTE_URL}" "${TEMP_FILE}" STATUS DOWNLOAD_STATUS SHOW_PROGRESS TIMEOUT 20)
 
-    # Check if download was successful
+    # Check if the download was successful
     list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
     if(NOT DOWNLOAD_RESULT EQUAL 0)
-        message(STATUS ">> Failed to download. Status: ${DOWNLOAD_STATUS}")
-        message(STATUS ">> Don't worry, failure of the script to check for updates has no impact on the build.")
+        message(STATUS ">> Download failed. Status: ${DOWNLOAD_STATUS}")
+        message(STATUS ">> Don't worry. This does not affect the build process.")
         return()
     endif()
 
     file(SHA256 "${TEMP_FILE}" REMOTE_HASH)
-    set(ZERO_CMAKE_REMOTE_HASH "${REMOTE_HASH}" CACHE STRING "Cached hash of remote version of zero.cmake" FORCE)
+    set(ZERO_CMAKE_REMOTE_HASH "${REMOTE_HASH}" CACHE STRING "Cached hash of the remote zero.cmake. (set by zero.cmake)" FORCE)
 
     # Compare local and remote hashes
     if(NOT "${LOCAL_HASH}" STREQUAL "${REMOTE_HASH}")
-        message(WARNING "Local file is outdated. A new version is ${TEMP_FILE}.")
+        message(WARNING "A newer version is available: ${TEMP_FILE}")
     else()
-        message(STATUS ">> Local file ${LOCAL_FILE_NAME} is up-to-date.")
+        message(STATUS ">> ${LOCAL_FILE} is up to date.")
     endif()
 endmacro()
 
@@ -169,13 +172,14 @@ function(zero_get_files rst _sources)
                 ${item}/*.c ${item}/*.C ${item}/*.cc ${item}/*.cpp ${item}/*.cxx
                 ${item}/*.h ${item}/*.hpp
             )
-            list(APPEND tmp_rst ${itemSrcs})
+            foreach(src ${itemSrcs})
+                # Convert to absolute and normalize
+                cmake_path(ABSOLUTE_PATH src NORMALIZE OUTPUT_VARIABLE src)
+                list(APPEND tmp_rst ${src})
+            endforeach()
         else() # item is file
-            # make sure using absolute filename
-            if(NOT (IS_ABSOLUTE "${item}"))
-                get_filename_component(item "${item}" ABSOLUTE)
-            endif()
-
+            # Convert to absolute and normalize
+            cmake_path(ABSOLUTE_PATH item NORMALIZE OUTPUT_VARIABLE item)
             list(APPEND tmp_rst ${item})
         endif()
     endforeach()
@@ -192,13 +196,14 @@ function(zero_get_files_rec rst _sources)
                 ${item}/*.c ${item}/*.C ${item}/*.cc ${item}/*.cpp ${item}/*.cxx
                 ${item}/*.h ${item}/*.hpp
             )
-            list(APPEND tmp_rst ${itemSrcs})
+            foreach(src ${itemSrcs})
+                # Convert to absolute and normalize
+                cmake_path(ABSOLUTE_PATH src NORMALIZE OUTPUT_VARIABLE src)
+                list(APPEND tmp_rst ${src})
+            endforeach()
         else() # item is file
-            # make sure using absolute filename
-            if(NOT (IS_ABSOLUTE "${item}"))
-                get_filename_component(item "${item}" ABSOLUTE)
-            endif()
-
+            # Convert to absolute and normalize
+            cmake_path(ABSOLUTE_PATH item NORMALIZE OUTPUT_VARIABLE item)
             list(APPEND tmp_rst ${item})
         endif()
     endforeach()
@@ -209,47 +214,51 @@ endfunction()
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(not recurse)
 # may not ordered as you want.
 function(zero_add_subdirs _path)
-    # search all subdirs
-    file(GLOB children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
-    set(dirs "")
-    list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
+    # Get absolute path of the target directory and normalize it
+    cmake_path(ABSOLUTE_PATH _path BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} NORMALIZE OUTPUT_VARIABLE _path)
 
-    # append to dirs if contains CMakeLists.txt
+    # Search all subdirectories
+    file(GLOB children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${_path}/*)
+    set(dirs "")
+    list(PREPEND children "${_path}") # Add root directory first
+
+    # Append to dirs if it contains CMakeLists.txt
     foreach(item ${children})
         if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
+            cmake_path(ABSOLUTE_PATH item NORMALIZE OUTPUT_VARIABLE item)
             list(APPEND dirs ${item})
         endif()
     endforeach()
 
-    # go to subdirs
     foreach(dir ${dirs})
         message(STATUS ">> Go to ${dir}")
         add_subdirectory(${dir})
     endforeach()
-
 endfunction()
 
 # go to all relative subdirs which contains CMakeLists.txt from CMAKE_CURRENT_SOURCE_DIR.(recurse)
 # may not ordered as you want.
 function(zero_add_subdirs_rec _path)
-    # search all subdirs
-    file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_path}/*)
-    set(dirs "")
-    list(PREPEND children "${CMAKE_CURRENT_SOURCE_DIR}/${_path}") # add first
+    # Get absolute path of the target directory and normalize it
+    cmake_path(ABSOLUTE_PATH _path BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} NORMALIZE OUTPUT_VARIABLE _path)
 
-    # append to dirs if contains CMakeLists.txt
+    # Search all subdirectories
+    file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${_path}/*)
+    set(dirs "")
+    list(PREPEND children "${_path}") # Add root directory first
+
+    # Append to dirs if it contains CMakeLists.txt
     foreach(item ${children})
         if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
+            cmake_path(ABSOLUTE_PATH item NORMALIZE OUTPUT_VARIABLE item)
             list(APPEND dirs ${item})
         endif()
     endforeach()
 
-    # go to subdirs
     foreach(dir ${dirs})
         message(STATUS ">> Go to ${dir}")
         add_subdirectory(${dir})
     endforeach()
-
 endfunction()
 
 ## target functions
