@@ -1,3 +1,3 @@
-#include <cstdio>
+#include <cstdio> // IWYU pragma: keep
 
 void hello();

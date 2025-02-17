@@ -1,5 +1,3 @@
 #include "hello.h"
 
-void hello(){
-    printf("hello\n");
-}
+void hello() { printf("hello\n"); }

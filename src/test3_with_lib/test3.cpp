@@ -1,7 +1,7 @@
 #include "fun.h"
 #include <cstdio>
 
-int main(){
+int main() {
     printf("this is main\n");
     fun();
     return 0;

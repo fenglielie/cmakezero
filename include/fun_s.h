@@ -1,4 +1,4 @@
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef DLL_IMPORT
 __declspec(dllexport) void fun_s();
 #endif
@@ -8,6 +8,6 @@ __declspec(dllimport) void fun_s();
 #endif
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 void fun_s();
 #endif
