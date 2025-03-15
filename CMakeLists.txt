@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(CMakeZero VERSION 1.2)
+project(CMakeZero VERSION 1.3)
 
 include(cmake/zero.cmake)
 
