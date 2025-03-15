@@ -242,6 +242,11 @@ function(zero_add_subdirs _path)
     file(GLOB children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${_path}/*)
     set(dirs "")
 
+    # Add _path if it is not the current directory
+    if(NOT "${_path}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+        list(PREPEND children "${_path}")
+    endif()
+
     # Append to dirs if it contains CMakeLists.txt
     foreach(item IN LISTS children)
         if((IS_DIRECTORY ${item}) AND (EXISTS "${item}/CMakeLists.txt"))
@@ -269,6 +274,11 @@ function(zero_add_subdirs_rec _path)
     # Search all subdirectories
     file(GLOB_RECURSE children LIST_DIRECTORIES ON CONFIGURE_DEPENDS ${_path}/*)
     set(dirs "")
+
+    # Add _path if it is not the current directory
+    if(NOT "${_path}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+        list(PREPEND children "${_path}")
+    endif()
 
     # Append to dirs if it contains CMakeLists.txt
     foreach(item IN LISTS children)
