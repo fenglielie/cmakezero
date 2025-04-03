@@ -7,10 +7,14 @@ zero_init()
 
 zero_info()
 
-zero_add_subdirs_rec(src)
+zero_add_subdirs(src)
 
 include(CTest)
 
-zero_add_subdirs_rec(test)
+add_test(NAME test1 COMMAND test1)
+add_test(NAME test2 COMMAND test2)
+add_test(NAME test3 COMMAND test3)
+add_test(NAME test4 COMMAND test4)
+add_test(NAME test5 COMMAND test5)
 
 zero_check_update()

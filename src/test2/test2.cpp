@@ -1,9 +1,9 @@
-#include "func_interface.h"
-
 #include <cstdio>
+
+void hello();
 
 int main() {
     printf("this is main\n");
-    func_interface();
+    hello();
     return 0;
 }

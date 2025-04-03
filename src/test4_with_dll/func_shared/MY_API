@@ -1,0 +1,13 @@
+#ifndef MY_API
+
+#ifdef _WIN32
+#ifdef MY_EXPORTS
+#define MY_API __declspec(dllexport)
+#else
+#define MY_API __declspec(dllimport)
+#endif
+#else
+#define MY_API
+#endif
+
+#endif

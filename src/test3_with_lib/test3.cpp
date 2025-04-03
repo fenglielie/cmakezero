@@ -1,8 +1,8 @@
-#include "fun.h"
+#include "func_static.h"
 #include <cstdio>
 
 int main() {
     printf("this is main\n");
-    fun();
+    func_static();
     return 0;
 }

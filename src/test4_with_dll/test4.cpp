@@ -1,8 +1,9 @@
-#include "fun_s.h"
+#include "func_shared.h"
+
 #include <cstdio>
 
 int main() {
     printf("this is main\n");
-    fun_s();
+    func_shared();
     return 0;
 }
