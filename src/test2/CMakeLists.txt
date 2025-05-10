@@ -1,3 +1,3 @@
-zero_get_files(SRCS .)
+zero_get_files(SRCS . RECURSE)
 add_executable(test2 ${SRCS})
-zero_target_info(test2)
+zero_check_target(test2)

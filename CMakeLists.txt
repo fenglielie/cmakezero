@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
-project(CMakeZero VERSION 1.3)
+project(CMakeZero VERSION 2.0)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/zero.cmake)
 
-zero_init()
+zero_setup()
 
-zero_info()
+zero_check()
 
 zero_add_subdirs(src)
 
@@ -16,5 +20,3 @@ add_test(NAME test2 COMMAND test2)
 add_test(NAME test3 COMMAND test3)
 add_test(NAME test4 COMMAND test4)
 add_test(NAME test5 COMMAND test5)
-
-zero_check_update()
