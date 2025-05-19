@@ -1,0 +1,29 @@
+name: Test-CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'test/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'test/**'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  run-bvt-gcc13:
+    uses: ./.github/workflows/bvt-gcc13.yml
+    name: run bvt with g++ 13
+
+  run-bvt-clang15:
+    uses: ./.github/workflows/bvt-clang18.yml
+    name: run bvt with clang 18
+
+  run-bvt-msvc14:
+    uses: ./.github/workflows/bvt-msvc14.yml
+    name: run bvt with msvc14 (vs2022)

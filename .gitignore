@@ -1,0 +1,6 @@
+.cache/
+.ignore/
+
+bin/
+build/
+lib/
