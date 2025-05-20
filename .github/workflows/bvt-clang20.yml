@@ -1,4 +1,4 @@
-name: bvt-clang18
+name: bvt-clang20
 
 on:
   workflow_call:
@@ -8,21 +8,21 @@ on:
         required: false
 
 jobs:
-  bvt-clang18:
+  bvt-clang20:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         ref: ${{ inputs.branch }}
 
-    - name: install clang 18
+    - name: install clang 20
       run: |
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main" -y
-        sudo apt update
-        sudo apt install -y clang-18
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/clang-18 18
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/clang++-18 18
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 20
+        sudo apt install libc++-20-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/clang-20 20
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/clang++-20 20
 
     - name: check compiler version
       run: g++ --version
